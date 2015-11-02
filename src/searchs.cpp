@@ -6,9 +6,8 @@
  */
 
 #include "searchs.hpp"
-vector<vector<float> > *matrizDistances;
 
-void buscaAnnealing(int geracoes, int numCidades) {
+void buscaAnnealing(int geracoes, int numCidades, vector<vector<float> > *matrizDistances) {
 	vector<int> cidades;
 	float caminho = 0.0, novo = 0.0;
 	for(int i=1; i <= numCidades; i++)
@@ -20,18 +19,18 @@ void buscaAnnealing(int geracoes, int numCidades) {
 	double temperatura = 700;
 	double decaimento = temperatura/geracoes;
 	for(int i=0; i < geracoes; i++) {
-		caminho = calculaValorCaminho(cidades, numCidades);
+		caminho = calculaValorCaminho(cidades, numCidades, matrizDistances);
 		int x1 = 0, x2 = 0;
 		while(x1 == x2){
 			x1 = rand()%(numCidades-1);
 			x2 = rand()%(numCidades-1);
 		}
 		swap(cidades[x1],cidades[x2]);
-		novo = calculaValorCaminho(cidades, numCidades);
+		novo = calculaValorCaminho(cidades, numCidades, matrizDistances);
 		if(novo > caminho) {
 			float delta = novo-caminho;
 			double aux = fRand(0,1);
-			if(aux > 1/exp(delta/temperatura)) {
+			if(aux > 1/exp(delta/temperatura)) { //exponencial
 				swap(cidades[x1],cidades[x2]);
 			}
 			myfile << 1/exp(delta/temperatura) << "\n";
@@ -39,11 +38,12 @@ void buscaAnnealing(int geracoes, int numCidades) {
 		temperatura = temperatura - decaimento;
 	}
 	myfile.close();
-	cout << "caminho: ";
+	cout << "Cidades percorridas: ";
 	for(int i = 0; i< numCidades; i++)
 		cout << cidades[i] << " ";
 	cout << endl;
-	cout << "Custo do Caminho Final:  " << caminho << endl;
+	int caminhoint = caminho;
+	cout << "Custo:  " << caminhoint << endl;
 }
 
 double distanciaEuclid(int x, int y, int xFinal, int yFinal) {
@@ -55,7 +55,7 @@ double fRand(double fMin, double fMax){
     return fMin + f * (fMax - fMin);
 }
 
-float calculaValorCaminho(vector<int> cidades, int numCidades) {
+float calculaValorCaminho(vector<int> cidades, int numCidades, vector<vector<float> > *matrizDistances) {
 	float result = 0.0;
 	for(int i=0; i < numCidades; i++) {
 		if(i!=numCidades-1)

@@ -9,9 +9,15 @@
 #include <iostream>
 #include "main.hpp"
 
-int main() {
-	cout << "!!!Hello World!!!" << endl; // prints !!!Hello World!!!
+//kroA100 : 21282
+//eil51 : 426
+
+int main(int argc, char **argv) {
+	cout << "Caxeiro viajante" << endl; // prints !!!Hello World!!!
 	int numCidades = 0;
-	buscaAnnealing(50000, 50);
+	vector<vector<int> > matriz;
+	vector<vector<float> > matrizDistances;
+	criaMatrixDistancias(argv[1],&matriz,&matrizDistances,&numCidades);
+	buscaAnnealing(500000, numCidades, &matrizDistances);
 	return 0;
 }

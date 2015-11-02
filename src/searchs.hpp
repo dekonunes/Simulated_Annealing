@@ -20,10 +20,9 @@
 #include "node.hpp"
 using namespace std;
 
-void buscaAnnealing(int,int);
-void buscaA(vector<vector<int> > *, int, int, int, int);
+void buscaAnnealing(int,int, vector<vector<float> > *);
 double distanciaEuclid(int, int, int, int);
-float calculaValorCaminho(vector<int>, int);
+float calculaValorCaminho(vector<int>, int, vector<vector<float> > *);
 double fRand(double, double);
 
 #endif /* SRC_BLIND_PURSUIT_ROBOT_SEARCHS_HPP_ */

@@ -11,9 +11,11 @@
 #include <iostream>
 #include <cstdlib>
 #include <cmath>
+#include <vector>
 
 using namespace std;
 
-float distance(int x1, int y1, int x2, int y2);
+float distance(int , int , int, int );
+void criaMatrixDistancias(char*, vector<vector<int> > *,vector<vector<float> > *, int *);
 
 #endif /* MAP_HPP_ */

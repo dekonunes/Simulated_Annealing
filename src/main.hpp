@@ -11,5 +11,6 @@
 using namespace std;
 
 #include "searchs.hpp"
+#include "map.hpp"
 
 #endif /* MAIN_HPP_ */

@@ -7,15 +7,15 @@
 #include "map.hpp"
 #include "ParserCSV.hpp"
 
-void criaMatrixDistancias(char* file, vector<vector<int> > matriz,vector<vector<float> > *matrizDistances, int *numberOfCitys) {
+void criaMatrixDistancias(char* file, vector<vector<int> > *matriz,vector<vector<float> > *matrizDistances, int *numberOfCitys) {
 	string f(file);
-	CsvFile arquivo(file, ' ', 7);
+	CsvFile arquivo(file, ' ', 1);
 	for (int i = 0; i < arquivo.lines; i++) {
-		vector<int> temp;
+		vector<int> row;
 		for (int j = 0; j < arquivo.columns; j++) {
-			temp.push_back(atoi(arquivo.info[i][j].c_str()));
+			row.push_back(atoi(arquivo.info[i][j].c_str()));
 		}
-		matriz.push_back(temp);
+		matriz->push_back(row);
 	}
 	*numberOfCitys = arquivo.lines;
 
@@ -23,7 +23,7 @@ void criaMatrixDistancias(char* file, vector<vector<int> > matriz,vector<vector<
 	for (int i = 0; i < *numberOfCitys; i++) {
 		vector<float> temp;
 		for (int j = 0; j < *numberOfCitys; j++)
-			temp.push_back(distance(matriz.at(i).at(1), matriz.at(i).at(2), matriz.at(j).at(1),	matriz.at(j).at(2)));
+			temp.push_back(distance(matriz->at(i).at(1), matriz->at(i).at(2), matriz->at(j).at(1),	matriz->at(j).at(2)));
 		matrizDistances->push_back(temp);
 	}
 }
