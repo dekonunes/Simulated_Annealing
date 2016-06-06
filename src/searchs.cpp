@@ -7,39 +7,40 @@
 
 #include "searchs.hpp"
 
-void buscaAnnealing(int geracoes, int numCidades, vector<vector<float> > *matrizDistances) {
+void buscaAnnealing(int geracoes, int numCidades,
+		vector<vector<float> > *matrizDistances) {
 	vector<int> cidades;
 	float caminho = 0.0, novo = 0.0;
-	for(int i=1; i <= numCidades; i++)
+	vector<double> vectorPlot;
+	for (int i = 1; i <= numCidades; i++)
 		cidades.push_back(i);
 
-	ofstream myfile; myfile.open("saida.csv");
-
-	std::random_shuffle( cidades.begin(), cidades.end() );
-	double temperatura = 700;
-	double decaimento = temperatura/geracoes;
-	for(int i=0; i < geracoes; i++) {
+	std::random_shuffle(cidades.begin(), cidades.end());
+	double temperatura = 20000;
+	double decaimento = temperatura / geracoes;
+	temperatura = 10;
+	float delta;
+	for (int i = 0; i < geracoes; i++) {
 		caminho = calculaValorCaminho(cidades, numCidades, matrizDistances);
 		int x1 = 0, x2 = 0;
-		while(x1 == x2){
-			x1 = rand()%(numCidades-1);
-			x2 = rand()%(numCidades-1);
+		while (x1 == x2) {
+			x1 = rand() % (numCidades - 1);
+			x2 = rand() % (numCidades - 1);
 		}
-		swap(cidades[x1],cidades[x2]);
+		swap(cidades[x1], cidades[x2]);
 		novo = calculaValorCaminho(cidades, numCidades, matrizDistances);
-		if(novo > caminho) {
-			float delta = novo-caminho;
-			double aux = fRand(0,1);
-			if(aux > 1/exp(delta/temperatura)) { //exponencial
-				swap(cidades[x1],cidades[x2]);
+		if (novo > caminho) {
+			delta = novo - caminho;
+			if (fRand(0, 1) > exp(-delta / temperatura)) {
+				swap(cidades[x1], cidades[x2]);
+				vectorPlot.push_back(exp(-delta / temperatura));
 			}
-			myfile << 1/exp(delta/temperatura) << "\n";
 		}
-		temperatura = temperatura - decaimento;
+		temperatura += decaimento;
 	}
-	myfile.close();
+	plot(vectorPlot, "Valores");
 	cout << "Cidades percorridas: ";
-	for(int i = 0; i< numCidades; i++)
+	for (int i = 0; i < numCidades; i++)
 		cout << cidades[i] << " ";
 	cout << endl;
 	int caminhoint = caminho;
@@ -50,20 +51,29 @@ double distanciaEuclid(int x, int y, int xFinal, int yFinal) {
 	return sqrt(pow(x - xFinal, 2) + pow(y - yFinal, 2));
 }
 
-double fRand(double fMin, double fMax){
-    double f = (double)rand() / RAND_MAX;
-    return fMin + f * (fMax - fMin);
+double fRand(double fMin, double fMax) {
+	static mt19937 mt(time(NULL));
+	static uniform_real_distribution<double> bit(fMin, fMax);
+	return bit(mt);
 }
 
-float calculaValorCaminho(vector<int> cidades, int numCidades, vector<vector<float> > *matrizDistances) {
+float calculaValorCaminho(vector<int> cidades, int numCidades,
+		vector<vector<float> > *matrizDistances) {
 	float result = 0.0;
-	for(int i=0; i < numCidades; i++) {
-		if(i!=numCidades-1)
-			result += matrizDistances->at(cidades[i]-1).at(cidades[i+1]-1);
+	for (int i = 0; i < numCidades; i++) {
+		if (i != numCidades - 1)
+			result += matrizDistances->at(cidades[i] - 1).at(
+					cidades[i + 1] - 1);
 		else
-			result += matrizDistances->at(cidades[i]-1).at(cidades[0]-1);
+			result += matrizDistances->at(cidades[i] - 1).at(cidades[0] - 1);
 	}
 	return result;
 }
 
+void plot(vector<double> vectorPlot, string titulo) {
+	Gnuplot gp;
+	gp << "plot" << gp.file1d(vectorPlot) << "with lines title '" << titulo
+			<< "'" << endl;
+
+}
 
