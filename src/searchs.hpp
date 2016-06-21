@@ -18,12 +18,19 @@
 #include <string>
 #include <random>
 #include <fstream>
-#include "node.hpp"
 #include "gnuplot-iostream/gnuplot-iostream.h"
+#define QUANTIDADEGENES 4
+#define QUANTIDADEBITS 3
+
 using namespace std;
 
-void buscaAnnealing(int,int, vector<vector<float> > *);
-double distanciaEuclid(int, int, int, int);
+double ackley(vector<double> );
+double rastrigin(vector<double>);
+void perturbacao(vector<double> *);
+void buscaAnnealing(int);
+void buscaAnnealingBinario(int);
+string geraIndividuoBinario();
+double mutacao(double);
 float calculaValorCaminho(vector<int>, int, vector<vector<float> > *);
 double fRand(double, double);
 void plot(vector<double>, string);

@@ -4,51 +4,52 @@
  *  Created on: 6 de out de 2015
  *      Author: dekonunes
  */
-
 #include "searchs.hpp"
 
-void buscaAnnealing(int geracoes, int numCidades,
-		vector<vector<float> > *matrizDistances) {
-	vector<int> cidades;
-	float caminho = 0.0, novo = 0.0;
+void buscaAnnealing(int geracoes) {
+	vector<double> individuo;
 	vector<double> vectorPlot;
-	for (int i = 1; i <= numCidades; i++)
-		cidades.push_back(i);
+	double fitness = 0.0, fitnessNovo = 0.0;
 
-	std::random_shuffle(cidades.begin(), cidades.end());
-	double temperatura = 20000;
+	for (int i = 0; i < QUANTIDADEGENES; i++)
+		individuo.push_back(fRand(-4, 4));
+
+	double temperatura = 200;
 	double decaimento = temperatura / geracoes;
-	temperatura = 10;
-	float delta;
+	double delta;
 	for (int i = 0; i < geracoes; i++) {
-		caminho = calculaValorCaminho(cidades, numCidades, matrizDistances);
-		int x1 = 0, x2 = 0;
-		while (x1 == x2) {
-			x1 = rand() % (numCidades - 1);
-			x2 = rand() % (numCidades - 1);
-		}
-		swap(cidades[x1], cidades[x2]);
-		novo = calculaValorCaminho(cidades, numCidades, matrizDistances);
-		if (novo > caminho) {
-			delta = novo - caminho;
+		fitness = ackley(individuo);
+		cout << fitness << endl;
+		perturbacao(&individuo);
+		fitnessNovo = ackley(individuo);
+		if (fitnessNovo < fitness) {
+			delta = fitnessNovo - fitness;
 			if (fRand(0, 1) > exp(-delta / temperatura)) {
-				swap(cidades[x1], cidades[x2]);
-				vectorPlot.push_back(exp(-delta / temperatura));
+				perturbacao(&individuo);
+				//vectorPlot.push_back(exp(-delta / temperatura));
+				vectorPlot.push_back(fitness);
 			}
 		}
-		temperatura += decaimento;
+		temperatura -= decaimento;
 	}
 	plot(vectorPlot, "Valores");
-	cout << "Cidades percorridas: ";
-	for (int i = 0; i < numCidades; i++)
-		cout << cidades[i] << " ";
-	cout << endl;
-	int caminhoint = caminho;
-	cout << "Custo:  " << caminhoint << endl;
+	//printa resultado
 }
 
-double distanciaEuclid(int x, int y, int xFinal, int yFinal) {
-	return sqrt(pow(x - xFinal, 2) + pow(y - yFinal, 2));
+void perturbacao(vector<double> *individuo) {
+	static mt19937 mt(time(NULL));
+	static uniform_int_distribution<int> bit(0,
+	QUANTIDADEGENES - 1);
+	int numRandom = bit(mt);
+	individuo->at(numRandom) = individuo->at(numRandom)
+			+ mutacao(individuo->at(numRandom));
+}
+
+double mutacao(double gene) {
+	static mt19937 mt(time(NULL));
+	double delta = gene / 10;
+	static uniform_real_distribution<double> numDelta(-delta, delta);
+	return numDelta(mt);
 }
 
 double fRand(double fMin, double fMax) {
@@ -57,17 +58,22 @@ double fRand(double fMin, double fMax) {
 	return bit(mt);
 }
 
-float calculaValorCaminho(vector<int> cidades, int numCidades,
-		vector<vector<float> > *matrizDistances) {
-	float result = 0.0;
-	for (int i = 0; i < numCidades; i++) {
-		if (i != numCidades - 1)
-			result += matrizDistances->at(cidades[i] - 1).at(
-					cidades[i + 1] - 1);
-		else
-			result += matrizDistances->at(cidades[i] - 1).at(cidades[0] - 1);
+double rastrigin(vector<double> individuo) {
+	double resultado = 0;
+	for (int var = 0; var < QUANTIDADEGENES - 1; ++var)
+		resultado += (pow(individuo[var], (double) 2)
+				- 10 * cos(2 * M_PI * individuo[var]) + 10);
+	return resultado;
+}
+
+double ackley(vector<double> individuo) {
+	double aux = 0, aux1 = 0;
+	for (int var = 0; var < QUANTIDADEGENES - 1; ++var) {
+		aux += individuo[var] * individuo[var];
+		aux1 += cos(2.0 * M_PI * individuo[var]);
 	}
-	return result;
+	return (-20.0 * (exp(-0.2 * sqrt(1.0 / (double) QUANTIDADEGENES * aux)))
+			- exp(1.0 / (double) QUANTIDADEGENES * aux1) + 20.0 + exp(1));
 }
 
 void plot(vector<double> vectorPlot, string titulo) {

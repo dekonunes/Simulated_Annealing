@@ -10,7 +10,7 @@
 
 using namespace std;
 
+#include <iostream>
 #include "searchs.hpp"
-#include "map.hpp"
 
 #endif /* MAIN_HPP_ */
