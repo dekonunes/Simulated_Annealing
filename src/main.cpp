@@ -9,7 +9,7 @@
 #include "main.hpp"
 
 int main(int argc, char **argv) {
-	//buscaAnnealing(100000);
-	buscaAnnealingBinario(10);
+	buscaAnnealing(100000);
+	//buscaAnnealingBinario(10);
 	return 0;
 }

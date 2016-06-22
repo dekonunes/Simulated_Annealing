@@ -19,7 +19,7 @@
 #include <random>
 #include <fstream>
 #include "gnuplot-iostream/gnuplot-iostream.h"
-#define QUANTIDADEGENES 4
+#define QUANTIDADEGENES 10
 #define QUANTIDADEBITS 3
 
 using namespace std;
@@ -34,5 +34,6 @@ double mutacao(double);
 float calculaValorCaminho(vector<int>, int, vector<vector<float> > *);
 double fRand(double, double);
 void plot(vector<double>, string);
+double xQuadrado(vector<double> individuo);
 
 #endif /* SRC_BLIND_PURSUIT_ROBOT_SEARCHS_HPP_ */
